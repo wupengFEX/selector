@@ -31,5 +31,6 @@ E('选择器')
 		E('.a,#a,.x ')
 
 #Demo
-	[测试页面](http://smartprogramming.sinaapp.com/quoteWebsite/selector/test/selector.html)，可以打开控制台，在里面输入测试里面的选择器均可实现
+	[测试页面](http://smartprogramming.sinaapp.com/quoteWebsite/selector/test/selector.html)
+	可以打开控制台，在里面输入测试里面的选择器均可实现
 
