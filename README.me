@@ -5,8 +5,8 @@
 (function(){
     var cache = {};    
  	var whitespace = "[\\x20\\t\\r\\n\\f]",//空白字符
- 		
-        //匹配分隔符,tagName,Id,Class
+ 		tagName,Id,Class
+ 		//匹配分隔符,
  		re_selector_fragment = /^\s*([>+~])?\s*([*\w-]+)?(?:#([\w-]+))?(?:\.([\w.-]+))?\s*/,
  		
  		rcomma = new RegExp( "," ),//匹配逗号
@@ -156,11 +156,18 @@
 	 			var refelm = context || window.document.documentElement,	 				
                     results = [],
 	 				elements = [refelm];
-                var con = 0;                
-                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                 
-                for(var i in cache){con++;}
-                if(con > 49){for(var i in cache){delete cache[i];break;}}
-                cache[selector] = selectorFragments;//将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存	 			
+	                var con = 0;                
+	                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                 
+	                for(var i in cache){con++;}
+	                if(con > 49){
+	                	for(var i in cache){
+	                		delete cache[i];
+	                		break;
+	                	}
+	                }
+	                //将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存
+	                cache[selector] = selectorFragments;
+
                 for (var i=0;i<selectorFragments.length;i++)//遍历子选择器
 		        {                    
 		            fragment = selectorFragments[i];//子选择器中的一个                
