@@ -1,3 +1,7 @@
+/**
+ * @author smart [wupeng_xg@163.com]
+ * @fileoverview selector based on js,Compatible with IE6+ and others
+ */
 (function(){
     var cache = {};    
     var whitespace = "[\\x20\\t\\r\\n\\f]",//空白字符        
