@@ -1,23 +1,19 @@
 (function(){
     var cache = {};    
- 	var whitespace = "[\\x20\\t\\r\\n\\f]",//空白字符
- 		
+    var whitespace = "[\\x20\\t\\r\\n\\f]",//空白字符        
         //匹配分隔符,tagName,Id,Class
- 		re_selector_fragment = /^\s*([>+~])?\s*([*\w-]+)?(?:#([\w-]+))?(?:\.([\w.-]+))?\s*/,
- 		
- 		rcomma = new RegExp( "," ),//匹配逗号
- 		rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" ),//分隔符>+~或者空格
- 		characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
-		identifier = characterEncoding.replace( "w", "w#" ),
- 		
+        re_selector_fragment = /^\s*([>+~])?\s*([*\w-]+)?(?:#([\w-]+))?(?:\.([\w.-]+))?\s*/,        
+        rcomma = new RegExp( "," ),//匹配逗号
+        rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" ),//分隔符>+~或者空格
+        characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
+        identifier = characterEncoding.replace( "w", "w#" ),        
         characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
         identifier = characterEncoding.replace( "w", "w#" ),
- 		attributes = "([*\w-]+)?\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +		
-		"*([*^$|!~]?=)" + whitespace +		
-		"*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
-		"*\\]";
- 	
-	var match,context,_undefined;
+        attributes = "([*\w-]+)?\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +        
+        "*([*^$|!~]?=)" + whitespace +      
+        "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
+        "*\\]";    
+    var match,context,_undefined;
     var selectorFun = {
         _hasClasses : function(elm, classNames)
         {//判断一个元素是否存在classNames这个类
@@ -31,6 +27,11 @@
                 }
             }
             return true;
+        },
+        trim : function(str){
+            var s = str.replace(/^(\u3000|\s|\t)*/gi, "");
+            s = s.replace(/(\u3000|\s|\t)*$/gi, "");
+            return s;
         },
         find : function (elm, selectorFragment)
         {//根据selectorFragment选择符查找在上下文elm中匹配元素            
@@ -48,7 +49,7 @@
             return results;
         },
         _isDescendant : function(elm, ancestor)
-        {//判断elm是否为ancestor的后代元素
+        {
             while ((elm = elm.parentNode) && elm !== ancestor) { }
             return elm !== null;
         },
@@ -66,9 +67,7 @@
         },
         _match : function (elm, selector)
         {//对比两个节点元素是否相同
-            if (!selector) {
-                return true;
-            }
+            if (!selector) return true;
 
             var tag = selector.uTag,
                 id = selector.id,
@@ -79,16 +78,11 @@
             !(id && id !== elm.id) &&//如果是Id选择器则判断tagName是否相同
             !(classes && !selectorFun._hasClasses(elm, classes));//如果是class选择器则判断tagName是否相同
         },
-        trim : function(str){
-            var s = str.replace(/^(\u3000|\s|\t)*/gi, "");
-            s = s.replace(/(\u3000|\s|\t)*$/gi, "");
-            return s;
-        },
         _sel : function (selector)
         {//将选择器按照正则匹配
             var f, out = [], attr,attrL,attrFlag=false,refFlag=false,j=0,uTag,isAttr;
             if (typeof selector === "string")
-            {
+            {           
                 while (selector)
                 {
                     attr = selector.match(attributes);
@@ -110,7 +104,7 @@
                             attrValue : isAttr && attr[6] || _undefined
                         }
                     });                                        
-                    var sliceLen = isAttr ? f[0].length + attr[0].length : f[0].length;
+                    var sliceLen = attrFlag && refFlag ? f[0].length + attr[0].length : f[0].length;
                     attrFlag=false,refFlag=false;                    
                     selector = selector.substring(sliceLen);                        
                     
@@ -121,47 +115,47 @@
             return out;
         }
     };
- 	E = function(selector,context){
- 		context = context ? context : document;
- 		if(!context.querySelectorAll){//最后要换成context.querySelectorAll            
+    E = function(selector,context){
+        selector = selectorFun.trim(selector);        
+        context = context ? context : document;
+        if(context.querySelectorAll){//最后要换成context.querySelectorAll            
             return context.querySelectorAll(selector);//高版本浏览器支持querySelectorAll的就用这个方法
- 		}
- 		else
- 		{//不支持querySelectorAll            
-            if(rcomma.exec(selector)){//群组选择器，也就是有逗号的情况下 				
-	 			var selectorArr = selector.split(',');
-	 			var selectorNewArr = [];
-	 			for(var i=0;i<selectorArr.length;i++){
-	 				selectorNewArr[i] = E(selectorArr[i],context);
-	 			}
-	 			return selectorNewArr;
-	 		}
-	 		else//单个选择器，非通用选择器
-	 		{
-	 			function contains(o)
-			    {
-			        for (var c = results.length; c--; ) {
-			            if (results[c] === o) {
-			                return true;
-			            }
-			        }
-			        return false;
-			    }
+        }
+        else
+        {//不支持querySelectorAll            
+            if(rcomma.exec(selector)){//群组选择器，也就是有逗号的情况下                
+                var selectorArr = selector.split(',');
+                var selectorNewArr = [];
+                for(var i=0;i<selectorArr.length;i++){
+                    selectorNewArr[i] = E(selectorArr[i],context);
+                }
+                return selectorNewArr;
+            }
+            else//单个选择器，非通用选择器
+            {
+                function contains(o)
+                {
+                    for (var c = results.length; c--; ) {
+                        if (results[c] === o) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
 
-
-	 			var refelm = context || window.document.documentElement,	 				
+                var refelm = context || window.document.documentElement,                    
                     results = [],
-	 				elements = [refelm];
+                    elements = [refelm];
                 var con = 0;                
-                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                 
+                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                
                 for(var i in cache){con++;}
                 if(con > 49){for(var i in cache){delete cache[i];break;}}
-                cache[selector] = selectorFragments;//将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存	 			
+                cache[selector] = selectorFragments;//将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存             
                 for (var i=0;i<selectorFragments.length;i++)//遍历子选择器
-		        {                    
-		            fragment = selectorFragments[i];//子选择器中的一个                
-		            for (var j=0;j<elements.length;j++)//遍历上下文
-		            {
+                {                    
+                    fragment = selectorFragments[i];//子选择器中的一个                
+                    for (var j=0;j<elements.length;j++)//遍历上下文
+                    {
                         elm = elements[j];//上下文
                         if(fragment.attr.tagName){//如果为属性选择器
                             var children = elm.getElementsByTagName('*');
@@ -182,7 +176,7 @@
                             }                            
                         }
                         else//如果不是属性选择器
-                        {
+                        {debugger;
                             switch (fragment.rel)//检查该属性，判断选择器类型
                             {
                                 case ">"://子选择器
@@ -195,8 +189,8 @@
                                         }
                                     }
                                     break;
-
-                                case "~"://同层中所有符合条件的选择器
+                                    
+                               case "~"://同层中所有符合条件的选择器
                                     while (elm = elm.nextSibling)
                                     {
                                         if (selectorFun._match(elm, fragment))
@@ -218,7 +212,7 @@
                                     }
                                     
                                     break;
-                                    
+
                                 default://其他情况，比如后代选择器
                                     elms = selectorFun.find(elm, fragment);                             
                                     if (i > 0)
@@ -234,12 +228,14 @@
                                     break;
                             }
                         }                        
-		            }
-		            if (!results.length) return [];
-		            elements = results.splice(0, results.length);
-		        }                
-		        return elements;
-	 		}
- 		} 		
- 	};
+                    }
+                    if (!results.length) {
+                        return [];
+                    }
+                    elements = results.splice(0, results.length);
+                }                
+                return elements;
+            }
+        }       
+    };
  })();
