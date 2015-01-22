@@ -176,7 +176,7 @@
                             }                            
                         }
                         else//如果不是属性选择器
-                        {debugger;
+                        {
                             switch (fragment.rel)//检查该属性，判断选择器类型
                             {
                                 case ">"://子选择器
