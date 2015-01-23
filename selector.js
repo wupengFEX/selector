@@ -15,7 +15,7 @@
         attributes = "([*\w-]+)?\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +        
         "*([*^$|!~]?=)" + whitespace +      
         "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
-        "*\\]";    
+        "*\\]";
     var match,context;
     var selectorFun = {
         _hasClasses : function(elm, classNames)
@@ -116,7 +116,7 @@
                             attrName : isAttr && attr[2] || undef,
                             attrValue : isAttr && attr[6] || undef
                         }
-                    });                                        
+                    });
                     var sliceLen = attrFlag && refFlag ? f[0].length + attr[0].length : f[0].length;
                     attrFlag=false,refFlag=false;                    
                     selector = selector.substring(sliceLen);                    
@@ -129,7 +129,7 @@
     var E = function(selector,context){
         selector = selectorFun.trim(selector);
         context = context ? context : doc;
-        if(!context.querySelectorAll){//最后要换成context.querySelectorAll            
+        if(context.querySelectorAll){//最后要换成context.querySelectorAll            
             return context.querySelectorAll(selector);//高版本浏览器支持querySelectorAll的就用这个方法
         }
         else
@@ -143,17 +143,17 @@
                 return selectorNewArr;
             }
             else//单个选择器，非通用选择器
-            {                
+            {
                 var refelm = context || win.document.documentElement,                    
                     results = [],
                     elements = [refelm];
                 var con = 0;                
-                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                
+                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来
                 for(var i in cache){con++;}
                 if(con > 49){for(var i in cache){delete cache[i];break;}}
                 cache[selector] = selectorFragments;//将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存             
                 for (var i=0;i<selectorFragments.length;i++)//遍历子选择器
-                {                    
+                {
                     fragment = selectorFragments[i];//子选择器中的一个                
                     for (var j=0;j<elements.length;j++)//遍历上下文
                     {
@@ -232,7 +232,7 @@
                     }
                     if (!results.length) {
                         return [];
-                    }
+                    }                    
                     elements = results.splice(0, results.length);
                 }
                 return elements;
