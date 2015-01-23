@@ -147,8 +147,7 @@
                     results = [],
                     elements = [refelm];
                 var con = 0;                
-                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                
-                debugger;
+                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                            
                 for(var i in cache){con++;}
                 if(con > 49){for(var i in cache){delete cache[i];break;}}
                 cache[selector] = selectorFragments;//将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存             
