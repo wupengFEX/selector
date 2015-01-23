@@ -126,7 +126,7 @@
             return out;
         }
     };
-    E = function(selector,context){
+    var E = function(selector,context){
         selector = selectorFun.trim(selector);        
         context = context ? context : doc;
         if(context.querySelectorAll){//最后要换成context.querySelectorAll            
@@ -239,4 +239,5 @@
             }
         }       
     };
+    win.E = E;
  })(window,document);
