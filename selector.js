@@ -128,7 +128,7 @@
     var E = function(selector,context){
         selector = selectorFun.trim(selector);
         context = context ? context : doc;
-        if(!context.querySelectorAll){//最后要换成context.querySelectorAll            
+        if(context.querySelectorAll){//最后要换成context.querySelectorAll            
             return context.querySelectorAll(selector);//高版本浏览器支持querySelectorAll的就用这个方法
         }
         else
