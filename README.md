@@ -27,7 +27,7 @@ E('选择器')
 		E("div[class=parent] .child div[class=little]")
 		E("div[class=parent] .child div[class=little]")
 		E(".parent .child div[class=little]")
-	9. 群组选择器:('.a,#b')返回二维数组形式，一维数组中每个元素代表群组选择器中的一个，其中为每个选择器的值
+	9. 群组选择器:('.a,#b')
 		E('.a,#a,.x ')
 
 #Demo
