@@ -10,8 +10,7 @@
         rcomma = new RegExp( "," ),//匹配逗号
         rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" ),//分隔符>+~或者空格
         characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
-        identifier = characterEncoding.replace( "w", "w#" ),        
-        characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",        
+        identifier = characterEncoding.replace( "w", "w#" ),                
         attributes = "([*\w-]+)?\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +        
         "*([*^$|!~]?=)" + whitespace +      
         "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
@@ -129,7 +128,7 @@
     var E = function(selector,context){
         selector = selectorFun.trim(selector);
         context = context ? context : doc;
-        if(context.querySelectorAll){//最后要换成context.querySelectorAll            
+        if(!context.querySelectorAll){//最后要换成context.querySelectorAll            
             return context.querySelectorAll(selector);//高版本浏览器支持querySelectorAll的就用这个方法
         }
         else
@@ -148,7 +147,8 @@
                     results = [],
                     elements = [refelm];
                 var con = 0;                
-                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来
+                selectorFragments = (!cache[selector]) ? selectorFun._sel(selector) : cache[selector];//将单个选择器中的所有链式子选择器分离开来                
+                debugger;
                 for(var i in cache){con++;}
                 if(con > 49){for(var i in cache){delete cache[i];break;}}
                 cache[selector] = selectorFragments;//将正则匹配的选择符及结果进行缓存，再存取该选择器时就走缓存             
@@ -232,7 +232,7 @@
                     }
                     if (!results.length) {
                         return [];
-                    }                    
+                    }
                     elements = results.splice(0, results.length);
                 }
                 return elements;
