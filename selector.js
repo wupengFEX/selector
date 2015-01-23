@@ -139,8 +139,7 @@
                 var selectorNewArr = [];
                 for(var i=0;i<selectorArr.length;i++){                    
                    selectorNewArr = selectorNewArr.concat(E(selectorArr[i],context));
-                }
-                debugger;
+                }                
                 return selectorNewArr;
             }
             else//单个选择器，非通用选择器
