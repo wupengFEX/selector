@@ -2,7 +2,7 @@
  * @author smart [wupeng_xg@163.com]
  * @fileoverview selector based on js,Compatible with IE6+ and others
  */
-(function(){
+(function(win,doc,undef){
     var cache = {};    
     var whitespace = "[\\x20\\t\\r\\n\\f]",//空白字符        
         //匹配分隔符,tagName,Id,Class
@@ -11,13 +11,12 @@
         rcombinators = new RegExp( "^" + whitespace + "*([>+~]|" + whitespace + ")" + whitespace + "*" ),//分隔符>+~或者空格
         characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
         identifier = characterEncoding.replace( "w", "w#" ),        
-        characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
-        identifier = characterEncoding.replace( "w", "w#" ),
+        characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",        
         attributes = "([*\w-]+)?\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +        
         "*([*^$|!~]?=)" + whitespace +      
         "*(?:'((?:\\\\.|[^\\\\'])*)'|\"((?:\\\\.|[^\\\\\"])*)\"|(" + identifier + "))|)" + whitespace +
         "*\\]";    
-    var match,context,_undefined;
+    var match,context;
     var selectorFun = {
         _hasClasses : function(elm, classNames)
         {//判断一个元素是否存在classNames这个类
@@ -32,6 +31,16 @@
             }
             return true;
         },
+        contains : function(o,results)
+        {
+            results = !results ? [] : results; 
+            for (var c = results.length; c--; ) {
+                if (results[c] === o) {
+                    return true;
+                }
+            }
+            return false;
+        },
         trim : function(str){
             var s = str.replace(/^(\u3000|\s|\t)*/gi, "");
             s = s.replace(/(\u3000|\s|\t)*$/gi, "");
@@ -40,7 +49,7 @@
         find : function (elm, selectorFragment)
         {//根据selectorFragment选择符查找在上下文elm中匹配元素            
             var c, results = selectorFragment.id ?
-                ((c = ((elm && elm.ownerDocument) || document).getElementById(selectorFragment.id)) && selectorFun._isDescendant(c, elm)) ? [c] : [] :
+                ((c = ((elm && elm.ownerDocument) || doc).getElementById(selectorFragment.id)) && selectorFun._isDescendant(c, elm)) ? [c] : [] :
                 selectorFun.toArray(elm.getElementsByTagName(selectorFragment.uTag || "*"));
             c = results.length;        
             if (c > 0 && (selectorFragment.id || selectorFragment.classes)) {
@@ -84,7 +93,7 @@
         },
         _sel : function (selector)
         {//将选择器按照正则匹配
-            var f, out = [], attr,attrL,attrFlag=false,refFlag=false,j=0,uTag,isAttr;
+            var f, out = [], attr,attrL,attrFlag=false,refFlag=false,uTag,isAttr;
             if (typeof selector === "string")
             {           
                 while (selector)
@@ -101,18 +110,16 @@
                         rel: f[1],//分隔符
                         uTag: uTag,//标签名
                         id: f[3],//id名
-                        classes: (f[4]) ? f[4].split(".") : _undefined,//类名
+                        classes: (f[4]) ? f[4].split(".") : undef,//类名
                         attr: {
-                            tagName : isAttr && selectorFun.trim(f[0]) || _undefined,
-                            attrName : isAttr && attr[2] || _undefined,
-                            attrValue : isAttr && attr[6] || _undefined
+                            tagName : isAttr && selectorFun.trim(f[0]) || undef,
+                            attrName : isAttr && attr[2] || undef,
+                            attrValue : isAttr && attr[6] || undef
                         }
                     });                                        
                     var sliceLen = attrFlag && refFlag ? f[0].length + attr[0].length : f[0].length;
                     attrFlag=false,refFlag=false;                    
-                    selector = selector.substring(sliceLen);                        
-                    
-                    j++;
+                    selector = selector.substring(sliceLen);                    
                 }
             }
             if(!out.length){out = [{}];}            
@@ -121,12 +128,12 @@
     };
     E = function(selector,context){
         selector = selectorFun.trim(selector);        
-        context = context ? context : document;
+        context = context ? context : doc;
         if(context.querySelectorAll){//最后要换成context.querySelectorAll            
             return context.querySelectorAll(selector);//高版本浏览器支持querySelectorAll的就用这个方法
         }
         else
-        {//不支持querySelectorAll            
+        {//不支持querySelectorAll                       
             if(rcomma.exec(selector)){//群组选择器，也就是有逗号的情况下                
                 var selectorArr = selector.split(',');
                 var selectorNewArr = [];
@@ -136,18 +143,8 @@
                 return selectorNewArr;
             }
             else//单个选择器，非通用选择器
-            {
-                function contains(o)
-                {
-                    for (var c = results.length; c--; ) {
-                        if (results[c] === o) {
-                            return true;
-                        }
-                    }
-                    return false;
-                }
-
-                var refelm = context || window.document.documentElement,                    
+            {                
+                var refelm = context || win.document.documentElement,                    
                     results = [],
                     elements = [refelm];
                 var con = 0;                
@@ -199,7 +196,7 @@
                                     {
                                         if (selectorFun._match(elm, fragment))
                                         {
-                                            if (contains(elm))
+                                            if (selectorFun.contains(elm,results))
                                             {
                                                 break;
                                             }
@@ -223,7 +220,7 @@
                                     {
                                         for (e = 0, le = elms.length; e < le; e++)
                                         {
-                                            if (!contains(elms[e])) {
+                                            if (!selectorFun.contains(elms[e]),results) {
                                                 results.push(elms[e]);
                                             }
                                         }
@@ -237,9 +234,9 @@
                         return [];
                     }
                     elements = results.splice(0, results.length);
-                }                
+                }
                 return elements;
             }
         }       
     };
- })();
+ })(window,document);
