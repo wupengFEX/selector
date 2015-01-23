@@ -127,9 +127,9 @@
         }
     };
     var E = function(selector,context){
-        selector = selectorFun.trim(selector);        
+        selector = selectorFun.trim(selector);
         context = context ? context : doc;
-        if(context.querySelectorAll){//最后要换成context.querySelectorAll            
+        if(!context.querySelectorAll){//最后要换成context.querySelectorAll            
             return context.querySelectorAll(selector);//高版本浏览器支持querySelectorAll的就用这个方法
         }
         else
@@ -137,9 +137,10 @@
             if(rcomma.exec(selector)){//群组选择器，也就是有逗号的情况下                
                 var selectorArr = selector.split(',');
                 var selectorNewArr = [];
-                for(var i=0;i<selectorArr.length;i++){
-                    selectorNewArr[i] = E(selectorArr[i],context);
+                for(var i=0;i<selectorArr.length;i++){                    
+                   selectorNewArr = selectorNewArr.concat(E(selectorArr[i],context));
                 }
+                debugger;
                 return selectorNewArr;
             }
             else//单个选择器，非通用选择器
