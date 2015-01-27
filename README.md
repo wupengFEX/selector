@@ -1,13 +1,17 @@
-# Description
+Description
+===========
 This file has completed the selector function，Support ID，Class,TagName,universal selector，descendant selector，Child selector，Attribute selectors，Group selector.
 
-#Compatible 
+Compatible
+===========
 IE6+ and other browser.
 
-#How to use
+How to use
+===========
 E('选择器')
 
-#Example
+Example
+===========
 	1. ID选择器:
 		E('#x')
 	2. Class选择器 
@@ -30,7 +34,8 @@ E('选择器')
 	9. 群组选择器:('.a,#b')
 		E('.a,#a,.x ')
 
-#Demo
-	[测试页面](http://smartprogramming.sinaapp.com/quoteWebsite/selector/test/selector.html)
+Demo
+===========
+### [测试页面](http://smartprogramming.sinaapp.com/quoteWebsite/selector/test/selector.html)
 	可以打开控制台，在里面输入测试里面的选择器均可实现
 
